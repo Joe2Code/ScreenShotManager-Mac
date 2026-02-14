@@ -23,6 +23,12 @@
 		A1P400032B000022 /* QuickActionsOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P400122B000022 /* QuickActionsOverlay.swift */; };
 		A1P400042B000023 /* ScreenshotDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P400132B000023 /* ScreenshotDetailView.swift */; };
 		A1P400052B000024 /* GlobalHotkey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P400142B000024 /* GlobalHotkey.swift */; };
+		A1P500012B000030 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P500102B000030 /* NotificationService.swift */; };
+		A1P500022B000031 /* ClipboardMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P500112B000031 /* ClipboardMonitor.swift */; };
+		A1P500032B000032 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P500122B000032 /* StatsView.swift */; };
+		A1P500042B000033 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P500132B000033 /* SettingsView.swift */; };
+		A1P500052B000034 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P500142B000034 /* DesignTokens.swift */; };
+		A1P500062B000035 /* ExpandedWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P500152B000035 /* ExpandedWindowView.swift */; };
 		A1PKG0012B000090 /* ScreenShotManagerCore in Frameworks */ = {isa = PBXBuildFile; productRef = A1PKG0022B000091 /* ScreenShotManagerCore */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +52,12 @@
 		A1P400122B000022 /* QuickActionsOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsOverlay.swift; sourceTree = "<group>"; };
 		A1P400132B000023 /* ScreenshotDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotDetailView.swift; sourceTree = "<group>"; };
 		A1P400142B000024 /* GlobalHotkey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotkey.swift; sourceTree = "<group>"; };
+		A1P500102B000030 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		A1P500112B000031 /* ClipboardMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardMonitor.swift; sourceTree = "<group>"; };
+		A1P500122B000032 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		A1P500132B000033 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A1P500142B000034 /* DesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignTokens.swift; sourceTree = "<group>"; };
+		A1P500152B000035 /* ExpandedWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedWindowView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +117,8 @@
 				A10000132B000004 /* MacOCRService.swift */,
 				A10000142B000005 /* MacImageStorage.swift */,
 				A1P400142B000024 /* GlobalHotkey.swift */,
+				A1P500102B000030 /* NotificationService.swift */,
+				A1P500112B000031 /* ClipboardMonitor.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -120,6 +134,10 @@
 				A1P400112B000021 /* TagManagementView.swift */,
 				A1P400122B000022 /* QuickActionsOverlay.swift */,
 				A1P400132B000023 /* ScreenshotDetailView.swift */,
+				A1P500122B000032 /* StatsView.swift */,
+				A1P500132B000033 /* SettingsView.swift */,
+				A1P500142B000034 /* DesignTokens.swift */,
+				A1P500152B000035 /* ExpandedWindowView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -231,6 +249,12 @@
 				A1P400032B000022 /* QuickActionsOverlay.swift in Sources */,
 				A1P400042B000023 /* ScreenshotDetailView.swift in Sources */,
 				A1P400052B000024 /* GlobalHotkey.swift in Sources */,
+				A1P500012B000030 /* NotificationService.swift in Sources */,
+				A1P500022B000031 /* ClipboardMonitor.swift in Sources */,
+				A1P500032B000032 /* StatsView.swift in Sources */,
+				A1P500042B000033 /* SettingsView.swift in Sources */,
+				A1P500052B000034 /* DesignTokens.swift in Sources */,
+				A1P500062B000035 /* ExpandedWindowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

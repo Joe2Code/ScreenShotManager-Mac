@@ -84,7 +84,7 @@ private struct TagRow: View {
     var body: some View {
         HStack(spacing: 8) {
             Circle()
-                .fill(Color(hex: tag.colorHex ?? "#888888") ?? .gray)
+                .fill(Color(hex: tag.colorHex ?? "#888888"))
                 .frame(width: 10, height: 10)
 
             Text(tag.name ?? "Untitled")

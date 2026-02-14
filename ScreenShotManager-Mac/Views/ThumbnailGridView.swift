@@ -120,18 +120,20 @@ struct ThumbnailCard: View {
                         .strokeBorder(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
                 )
 
-            // OCR indicator
+            // OCR indicator with gold tint
             if screenshot.ocrProcessed, !isHovered {
                 HStack {
                     Spacer()
                     Image(systemName: "text.viewfinder")
                         .font(.system(size: 8))
+                        .foregroundColor(DesignTokens.primary)
                         .padding(3)
                         .background(.ultraThinMaterial)
                         .clipShape(Circle())
                 }
                 .padding(4)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                .transition(.opacity)
             }
 
             // Quick actions on hover

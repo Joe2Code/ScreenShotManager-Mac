@@ -36,6 +36,8 @@ final class AppState: ObservableObject {
     let ocrService: MacOCRService
     let imageStorage: CoreImageStorage
     let globalHotkey = GlobalHotkey()
+    let clipboardMonitor = ClipboardMonitor()
+    let notificationService = NotificationService.shared
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -58,6 +60,12 @@ final class AppState: ObservableObject {
         loadScreenshots()
         loadTags()
         refreshSmartFolders()
+        notificationService.requestPermission()
+
+        // Start clipboard monitor if enabled
+        if UserDefaults.standard.bool(forKey: "clipboardMonitorEnabled") {
+            clipboardMonitor.start()
+        }
     }
 
     // MARK: - Setup
@@ -87,6 +95,15 @@ final class AppState: ObservableObject {
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
             .sink { [weak self] query in
                 self?.loadScreenshots(searchQuery: query)
+            }
+            .store(in: &cancellables)
+
+        // Clipboard monitor
+        clipboardMonitor.$detectedImage
+            .compactMap { $0 }
+            .sink { [weak self] image in
+                guard let self = self else { return }
+                Task { await self.importClipboardImage(image) }
             }
             .store(in: &cancellables)
     }
@@ -189,6 +206,31 @@ final class AppState: ObservableObject {
                 }
             }
         }
+    }
+
+    /// Import an image from the clipboard monitor.
+    private func importClipboardImage(_ image: NSImage) async {
+        let identifier = "mac-clip-\(UUID().uuidString)"
+        if let _ = imageStorage.saveImage(image, for: identifier) {
+            _ = imageStorage.saveThumbnail(image, for: identifier)
+            let screenshot = persistence.fetchOrCreateScreenshot(
+                localIdentifier: identifier,
+                creationDate: Date()
+            )
+            screenshot.localImagePath = imageStorage.sanitizedFilename(from: identifier) + ".jpg"
+            persistence.save()
+            isProcessingOCR = true
+            await ocrService.processScreenshot(image, identifier: identifier)
+            isProcessingOCR = false
+            loadScreenshots()
+            clipboardMonitor.clearDetected()
+        }
+    }
+
+    /// Quick copy: copies OCR text from the most recent screenshot.
+    func copyLastOCRText() {
+        guard let latest = screenshots.first(where: { $0.ocrProcessed && $0.ocrText?.isEmpty == false }) else { return }
+        copyOCRText(for: latest)
     }
 
     // MARK: - Actions

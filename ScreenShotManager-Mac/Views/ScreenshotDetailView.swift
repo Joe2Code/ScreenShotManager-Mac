@@ -115,7 +115,7 @@ struct ScreenshotDetailView: View {
                         ForEach(screenshot.tagsArray, id: \.id) { tag in
                             HStack(spacing: 4) {
                                 Circle()
-                                    .fill(Color(hex: tag.colorHex ?? "#888888") ?? .gray)
+                                    .fill(Color(hex: tag.colorHex ?? "#888888"))
                                     .frame(width: 6, height: 6)
                                 Text(tag.name ?? "")
                                     .font(.caption2)
