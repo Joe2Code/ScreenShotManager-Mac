@@ -1,0 +1,15 @@
+{
+  "originHash" : "e3c22528e6b803e333c973ae12fa473be3b74ac8948036bd9fb0c6e811db9fc1",
+  "pins" : [
+    {
+      "identity" : "screenshotmanagercore",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Joe2Code/ScreenShotManagerCore.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "f84cd9b4ba11185001e55abed6008f2fbbbc7841"
+      }
+    }
+  ],
+  "version" : 3
+}
