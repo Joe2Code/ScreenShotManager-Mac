@@ -1,14 +1,17 @@
 import SwiftUI
 import ScreenShotManagerCore
+import UniformTypeIdentifiers
 
-/// Screenshot grid with hover effects and time grouping.
+/// Screenshot grid with hover effects, time grouping, and drag support.
 struct ThumbnailGridView: View {
 
     let screenshots: [Screenshot]
     let imageStorage: CoreImageStorage
+    let onSelect: (Screenshot) -> Void
     let onDelete: (Screenshot) -> Void
     let onCopyOCR: (Screenshot) -> Void
     let onOpenFinder: (Screenshot) -> Void
+    let selectedID: String?
 
     private let columns = [
         GridItem(.adaptive(minimum: 80, maximum: 120), spacing: 8)
@@ -23,9 +26,11 @@ struct ThumbnailGridView: View {
                             ThumbnailCard(
                                 screenshot: screenshot,
                                 imageStorage: imageStorage,
-                                onDelete: onDelete,
-                                onCopyOCR: onCopyOCR,
-                                onOpenFinder: onOpenFinder
+                                isSelected: screenshot.localIdentifier == selectedID,
+                                onSelect: { onSelect(screenshot) },
+                                onDelete: { onDelete(screenshot) },
+                                onCopyOCR: { onCopyOCR(screenshot) },
+                                onOpenFinder: { onOpenFinder(screenshot) }
                             )
                         }
                     } header: {
@@ -94,41 +99,74 @@ struct ThumbnailCard: View {
 
     let screenshot: Screenshot
     let imageStorage: CoreImageStorage
-    let onDelete: (Screenshot) -> Void
-    let onCopyOCR: (Screenshot) -> Void
-    let onOpenFinder: (Screenshot) -> Void
+    let isSelected: Bool
+    let onSelect: () -> Void
+    let onDelete: () -> Void
+    let onCopyOCR: () -> Void
+    let onOpenFinder: () -> Void
 
     @State private var isHovered = false
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
+        ZStack(alignment: .bottom) {
             thumbnailImage
                 .frame(width: 80, height: 80)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
-                .shadow(color: isHovered ? Color.accentColor.opacity(0.3) : .clear, radius: 4)
+                .shadow(color: isSelected ? Color.accentColor.opacity(0.5) : (isHovered ? Color.accentColor.opacity(0.3) : .clear), radius: isSelected ? 6 : 4)
                 .scaleEffect(isHovered ? 1.02 : 1.0)
                 .animation(.easeInOut(duration: 0.15), value: isHovered)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
+                )
 
             // OCR indicator
-            if screenshot.ocrProcessed {
-                Image(systemName: "text.viewfinder")
-                    .font(.system(size: 8))
-                    .padding(3)
-                    .background(.ultraThinMaterial)
-                    .clipShape(Circle())
-                    .padding(4)
+            if screenshot.ocrProcessed, !isHovered {
+                HStack {
+                    Spacer()
+                    Image(systemName: "text.viewfinder")
+                        .font(.system(size: 8))
+                        .padding(3)
+                        .background(.ultraThinMaterial)
+                        .clipShape(Circle())
+                }
+                .padding(4)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            }
+
+            // Quick actions on hover
+            if isHovered {
+                QuickActionsOverlay(
+                    screenshot: screenshot,
+                    onCopyOCR: onCopyOCR,
+                    onDelete: onDelete,
+                    onOpenFinder: onOpenFinder,
+                    onTag: {} // Tag picker handled via context menu for now
+                )
+                .transition(.opacity)
             }
         }
+        .frame(width: 80, height: 80)
         .onHover { hovering in
-            isHovered = hovering
+            withAnimation(.easeInOut(duration: 0.15)) {
+                isHovered = hovering
+            }
+        }
+        .onTapGesture { onSelect() }
+        .onDrag {
+            guard let path = screenshot.localImagePath else {
+                return NSItemProvider()
+            }
+            let url = imageStorage.imageURL(relativePath: path)
+            return NSItemProvider(object: url as NSURL)
         }
         .contextMenu {
             if screenshot.ocrProcessed, let text = screenshot.ocrText, !text.isEmpty {
-                Button("Copy OCR Text") { onCopyOCR(screenshot) }
+                Button("Copy OCR Text") { onCopyOCR() }
             }
-            Button("Show in Finder") { onOpenFinder(screenshot) }
+            Button("Show in Finder") { onOpenFinder() }
             Divider()
-            Button("Delete", role: .destructive) { onDelete(screenshot) }
+            Button("Delete", role: .destructive) { onDelete() }
         }
     }
 

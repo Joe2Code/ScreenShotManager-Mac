@@ -18,6 +18,11 @@
 		A10000092B000009 /* MenuBarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000182B000009 /* MenuBarIcon.swift */; };
 		A100000A2B00000A /* ScreenshotInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000192B00000A /* ScreenshotInfo.swift */; };
 		A100000B2B00000B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A100001A2B00000B /* Assets.xcassets */; };
+		A1P400012B000020 /* SmartFoldersPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P400102B000020 /* SmartFoldersPanel.swift */; };
+		A1P400022B000021 /* TagManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P400112B000021 /* TagManagementView.swift */; };
+		A1P400032B000022 /* QuickActionsOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P400122B000022 /* QuickActionsOverlay.swift */; };
+		A1P400042B000023 /* ScreenshotDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P400132B000023 /* ScreenshotDetailView.swift */; };
+		A1P400052B000024 /* GlobalHotkey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1P400142B000024 /* GlobalHotkey.swift */; };
 		A1PKG0012B000090 /* ScreenShotManagerCore in Frameworks */ = {isa = PBXBuildFile; productRef = A1PKG0022B000091 /* ScreenShotManagerCore */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +41,11 @@
 		A100001A2B00000B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A100001B2B00000C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A100001C2B00000D /* ScreenShotManager_Mac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ScreenShotManager_Mac.entitlements; sourceTree = "<group>"; };
+		A1P400102B000020 /* SmartFoldersPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartFoldersPanel.swift; sourceTree = "<group>"; };
+		A1P400112B000021 /* TagManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagManagementView.swift; sourceTree = "<group>"; };
+		A1P400122B000022 /* QuickActionsOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionsOverlay.swift; sourceTree = "<group>"; };
+		A1P400132B000023 /* ScreenshotDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotDetailView.swift; sourceTree = "<group>"; };
+		A1P400142B000024 /* GlobalHotkey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalHotkey.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +104,7 @@
 				A10000122B000003 /* FolderWatcher.swift */,
 				A10000132B000004 /* MacOCRService.swift */,
 				A10000142B000005 /* MacImageStorage.swift */,
+				A1P400142B000024 /* GlobalHotkey.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -105,6 +116,10 @@
 				A10000162B000007 /* ThumbnailGridView.swift */,
 				A10000172B000008 /* SearchBarView.swift */,
 				A10000182B000009 /* MenuBarIcon.swift */,
+				A1P400102B000020 /* SmartFoldersPanel.swift */,
+				A1P400112B000021 /* TagManagementView.swift */,
+				A1P400122B000022 /* QuickActionsOverlay.swift */,
+				A1P400132B000023 /* ScreenshotDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -211,6 +226,11 @@
 				A10000082B000008 /* SearchBarView.swift in Sources */,
 				A10000092B000009 /* MenuBarIcon.swift in Sources */,
 				A100000A2B00000A /* ScreenshotInfo.swift in Sources */,
+				A1P400012B000020 /* SmartFoldersPanel.swift in Sources */,
+				A1P400022B000021 /* TagManagementView.swift in Sources */,
+				A1P400032B000022 /* QuickActionsOverlay.swift in Sources */,
+				A1P400042B000023 /* ScreenshotDetailView.swift in Sources */,
+				A1P400052B000024 /* GlobalHotkey.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
