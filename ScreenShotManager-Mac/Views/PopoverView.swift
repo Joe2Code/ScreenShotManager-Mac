@@ -7,6 +7,7 @@ import UniformTypeIdentifiers
 struct PopoverView: View {
 
     @EnvironmentObject var appState: AppState
+    @AppStorage("gridColumnCount") private var gridColumnCount = 1
     @State private var showTagManager = false
     @State private var showSidebar = false
 
@@ -29,7 +30,7 @@ struct PopoverView: View {
                 mainListView
             }
         }
-        .frame(width: showSidebar ? 520 : 360, height: 480)
+        .frame(width: showSidebar ? 680 : 500, height: 650)
         .background(.ultraThinMaterial)
         .onDrop(of: [.image], isTargeted: nil) { providers in
             appState.importDroppedImage(providers)
@@ -90,13 +91,18 @@ struct PopoverView: View {
                     emptyState
                 } else {
                     ThumbnailGridView(
-                        screenshots: appState.screenshots,
+                        screenshots: appState.visibleScreenshots,
                         imageStorage: appState.imageStorage,
                         onSelect: { appState.selectedScreenshot = $0 },
                         onDelete: { appState.deleteScreenshot($0) },
                         onCopyOCR: { appState.copyOCRText(for: $0) },
+                        onCopyImage: { appState.copyImage(for: $0) },
                         onOpenFinder: { appState.openInFinder($0) },
-                        selectedID: appState.selectedScreenshot?.localIdentifier
+                        selectedID: appState.selectedScreenshot?.localIdentifier,
+                        columnCount: gridColumnCount,
+                        hasMore: appState.hasMore,
+                        remainingCount: appState.screenshots.count - appState.visibleScreenshots.count,
+                        onLoadMore: { appState.loadMore() }
                     )
                 }
             }

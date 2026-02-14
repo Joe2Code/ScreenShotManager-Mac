@@ -9,6 +9,7 @@ struct SettingsView: View {
     @AppStorage("launchAtLogin") private var launchAtLogin = false
     @AppStorage("clipboardMonitorEnabled") private var clipboardMonitorEnabled = false
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
+    @AppStorage("gridColumnCount") private var gridColumnCount = 1
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -41,6 +42,23 @@ struct SettingsView: View {
                                 chooseFolder()
                             }
                             .controlSize(.small)
+                        }
+                    }
+
+                    // Grid Layout
+                    settingSection(title: "Grid Layout", icon: "square.grid.2x2") {
+                        HStack {
+                            Text("Columns per row")
+                                .font(.caption)
+                            Spacer()
+                            Picker("", selection: $gridColumnCount) {
+                                Text("1").tag(1)
+                                Text("2").tag(2)
+                                Text("3").tag(3)
+                                Text("4").tag(4)
+                            }
+                            .pickerStyle(.segmented)
+                            .frame(width: 160)
                         }
                     }
 

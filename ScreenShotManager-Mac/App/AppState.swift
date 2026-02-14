@@ -27,6 +27,7 @@ final class AppState: ObservableObject {
     @Published var selectedScreenshot: Screenshot?
     @Published var selectedFolderID: UUID?
     @Published var selectedTagFilter: Tag?
+    @Published var displayLimit: Int = 10
 
     // MARK: - Properties
 
@@ -57,10 +58,15 @@ final class AppState: ObservableObject {
         persistence.setupDefaultSmartFoldersIfNeeded()
 
         setupBindings()
-        loadScreenshots()
         loadTags()
-        refreshSmartFolders()
         notificationService.requestPermission()
+
+        // Import existing screenshots on first launch, then load
+        Task {
+            await importExistingScreenshotsIfNeeded()
+            loadScreenshots()
+            refreshSmartFolders()
+        }
 
         // Start clipboard monitor if enabled
         if UserDefaults.standard.bool(forKey: "clipboardMonitorEnabled") {
@@ -111,6 +117,7 @@ final class AppState: ObservableObject {
     // MARK: - Screenshot Loading
 
     func loadScreenshots(searchQuery: String? = nil) {
+        displayLimit = 10
         let query = searchQuery ?? self.searchQuery
 
         if let tagFilter = selectedTagFilter {
@@ -138,6 +145,46 @@ final class AppState: ObservableObject {
     }
 
     // MARK: - Import
+
+    /// Imports existing screenshots from ~/Desktop on first launch.
+    private func importExistingScreenshotsIfNeeded() async {
+        let key = "hasImportedExistingScreenshots"
+        guard !UserDefaults.standard.bool(forKey: key) else { return }
+
+        let existingURLs = folderWatcher.existingScreenshotURLs()
+        guard !existingURLs.isEmpty else {
+            UserDefaults.standard.set(true, forKey: key)
+            return
+        }
+
+        iconState = .processing
+        isProcessingOCR = true
+
+        for fileURL in existingURLs {
+            guard let nsImage = NSImage(contentsOf: fileURL) else { continue }
+
+            let identifier = "mac-\(UUID().uuidString)"
+
+            if let _ = imageStorage.saveImage(nsImage, for: identifier) {
+                _ = imageStorage.saveThumbnail(nsImage, for: identifier)
+
+                let creationDate = (try? fileURL.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? Date()
+                let screenshot = persistence.fetchOrCreateScreenshot(
+                    localIdentifier: identifier,
+                    creationDate: creationDate
+                )
+                screenshot.localImagePath = imageStorage.sanitizedFilename(from: identifier) + ".jpg"
+                persistence.save()
+
+                // Run OCR in background
+                await ocrService.processScreenshot(nsImage, identifier: identifier)
+            }
+        }
+
+        isProcessingOCR = false
+        iconState = isPaused ? .paused : .idle
+        UserDefaults.standard.set(true, forKey: key)
+    }
 
     private func importNewScreenshots(_ fileURLs: [URL]) async {
         iconState = .newScreenshot
@@ -262,6 +309,13 @@ final class AppState: ObservableObject {
         NSPasteboard.general.setString(text, forType: .string)
     }
 
+    func copyImage(for screenshot: Screenshot) {
+        guard let path = screenshot.localImagePath,
+              let nsImage = imageStorage.loadImage(relativePath: path) else { return }
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.writeObjects([nsImage])
+    }
+
     func openInFinder(_ screenshot: Screenshot) {
         guard let path = screenshot.localImagePath else { return }
         let url = imageStorage.imageURL(relativePath: path)
@@ -345,6 +399,24 @@ final class AppState: ObservableObject {
     func copySelectedOCR() {
         guard let screenshot = selectedScreenshot else { return }
         copyOCRText(for: screenshot)
+    }
+
+    // MARK: - Pagination
+
+    var visibleScreenshots: [Screenshot] {
+        Array(screenshots.prefix(displayLimit))
+    }
+
+    var hasMore: Bool {
+        screenshots.count > displayLimit
+    }
+
+    func loadMore() {
+        displayLimit += 10
+    }
+
+    func resetPagination() {
+        displayLimit = 10
     }
 
     // MARK: - Stats

@@ -10,16 +10,21 @@ struct ThumbnailGridView: View {
     let onSelect: (Screenshot) -> Void
     let onDelete: (Screenshot) -> Void
     let onCopyOCR: (Screenshot) -> Void
+    let onCopyImage: (Screenshot) -> Void
     let onOpenFinder: (Screenshot) -> Void
     let selectedID: String?
+    var columnCount: Int = 1
+    var hasMore: Bool = false
+    var remainingCount: Int = 0
+    var onLoadMore: (() -> Void)?
 
-    private let columns = [
-        GridItem(.adaptive(minimum: 80, maximum: 120), spacing: 8)
-    ]
+    private var columns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: 12), count: columnCount)
+    }
 
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: columns, spacing: 8) {
+            LazyVGrid(columns: columns, spacing: 14) {
                 ForEach(groupedScreenshots, id: \.title) { group in
                     Section {
                         ForEach(group.screenshots, id: \.localIdentifier) { screenshot in
@@ -30,6 +35,7 @@ struct ThumbnailGridView: View {
                                 onSelect: { onSelect(screenshot) },
                                 onDelete: { onDelete(screenshot) },
                                 onCopyOCR: { onCopyOCR(screenshot) },
+                                onCopyImage: { onCopyImage(screenshot) },
                                 onOpenFinder: { onOpenFinder(screenshot) }
                             )
                         }
@@ -45,7 +51,26 @@ struct ThumbnailGridView: View {
                     }
                 }
             }
-            .padding(12)
+            .padding(16)
+
+            if hasMore, let onLoadMore = onLoadMore {
+                Button {
+                    onLoadMore()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.down.circle")
+                        Text("Load More (\(remainingCount) remaining)")
+                    }
+                    .font(.system(size: 13, weight: .medium))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(Color.gray.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+            }
         }
     }
 
@@ -103,6 +128,7 @@ struct ThumbnailCard: View {
     let onSelect: () -> Void
     let onDelete: () -> Void
     let onCopyOCR: () -> Void
+    let onCopyImage: () -> Void
     let onOpenFinder: () -> Void
 
     @State private var isHovered = false
@@ -110,7 +136,8 @@ struct ThumbnailCard: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             thumbnailImage
-                .frame(width: 80, height: 80)
+                .frame(maxWidth: .infinity)
+                .frame(height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .shadow(color: isSelected ? Color.accentColor.opacity(0.5) : (isHovered ? Color.accentColor.opacity(0.3) : .clear), radius: isSelected ? 6 : 4)
                 .scaleEffect(isHovered ? 1.02 : 1.0)
@@ -148,7 +175,6 @@ struct ThumbnailCard: View {
                 .transition(.opacity)
             }
         }
-        .frame(width: 80, height: 80)
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.15)) {
                 isHovered = hovering
@@ -163,11 +189,12 @@ struct ThumbnailCard: View {
             return NSItemProvider(object: url as NSURL)
         }
         .contextMenu {
+            Button("Copy Image") { onCopyImage() }
             if screenshot.ocrProcessed, let text = screenshot.ocrText, !text.isEmpty {
                 Button("Copy OCR Text") { onCopyOCR() }
             }
-            Button("Show in Finder") { onOpenFinder() }
             Divider()
+            Button("Show in Finder") { onOpenFinder() }
             Button("Delete", role: .destructive) { onDelete() }
         }
     }

@@ -40,6 +40,23 @@ final class FolderWatcher: ObservableObject {
         }
     }
 
+    /// Returns URLs of all existing screenshot files in the watched directory.
+    func existingScreenshotURLs() -> [URL] {
+        guard let contents = try? FileManager.default.contentsOfDirectory(
+            at: watchedURL,
+            includingPropertiesForKeys: [.creationDateKey],
+            options: [.skipsHiddenFiles]
+        ) else { return [] }
+
+        return contents
+            .filter { isScreenshot($0) }
+            .sorted { a, b in
+                let dateA = (try? a.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? .distantPast
+                let dateB = (try? b.resourceValues(forKeys: [.creationDateKey]))?.creationDate ?? .distantPast
+                return dateA > dateB
+            }
+    }
+
     private func isScreenshot(_ url: URL) -> Bool {
         let name = url.lastPathComponent
         let range = NSRange(name.startIndex..<name.endIndex, in: name)
